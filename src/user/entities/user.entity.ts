@@ -1,6 +1,6 @@
 import { BeforeInsert, Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import * as bcrypt from 'bcrypt';
-import { Comment } from "./comment.entity";
+import { Comment } from "src/comment/entities/comment.entity";
 
 @Entity('users')
 export class User{

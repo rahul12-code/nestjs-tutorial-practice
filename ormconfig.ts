@@ -1,6 +1,6 @@
-import { Comment } from "src/entities/comment.entity";
-import { Topic } from "src/entities/topic.entity";
-import { User } from "src/entities/user.entity";
+import { Comment } from "src/comment/entities/comment.entity";
+import { Topic } from "src/topic/entities/topic.entity";
+import { User } from "src/user/entities/user.entity";
 import { PostgresConnectionOptions } from "typeorm/driver/postgres/PostgresConnectionOptions";
 
 

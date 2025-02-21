@@ -22,6 +22,16 @@ export class CommentController {
     return this.commentService.findOne(+id);
   }
 
+  @Get('/user/:id')
+  getAllCommentsByUserId(@Param('id') id: number) {
+    return this.commentService.getAllCommentsByuserId(+id);
+  }
+
+  @Get('/topic/:id')
+  getAllCommentsByTopicId(@Param('id') id: number) {
+    return this.commentService.getAllCommentsByTopicId(+id);
+  }
+
   @Patch(':id')
   update(@Param('id') id: number, @Body() updateCommentDto: UpdateCommentDto) {
     return this.commentService.update(+id, updateCommentDto);

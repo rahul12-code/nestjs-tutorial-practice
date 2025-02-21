@@ -51,6 +51,18 @@ export class CommentService {
     return await this.CommentRepo.findOne({ where: { id: id } });
   }
 
+  async getAllCommentsByuserId(id: number){
+    return await this.CommentRepo.find({
+      relations:['user'] , where:{user:{id:id}}
+    })
+  }
+
+  async getAllCommentsByTopicId(id: number){
+    return await this.CommentRepo.find({
+      relations:['topic'] , where:{topic:{id:id}}
+    })
+  }
+
   async update(id: number, updateCommentDto: UpdateCommentDto) {
     
     const { text, userId, topicId } = updateCommentDto;

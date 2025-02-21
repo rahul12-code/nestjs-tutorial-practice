@@ -1,35 +1,77 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Comment } from './entities/comment.entity';
 import { Repository } from 'typeorm';
+import { User } from 'src/user/entities/user.entity';
+import { Topic } from 'src/topic/entities/topic.entity';
 
 @Injectable()
 export class CommentService {
+  constructor(
+    @InjectRepository(Comment)
+    private readonly CommentRepo: Repository<Comment>,
 
-  // constructor(
-  //   @InjectRepository(Comment)
-  //   private readonly CommentRepo:Repository<Comment>
-  // ){}
+    @InjectRepository(User)
+    private readonly UserRepo: Repository<User>,
 
-  create(createCommentDto: CreateCommentDto) {
-    console.log(createCommentDto)
+    @InjectRepository(Topic)
+    private readonly TopicRepo: Repository<Topic>,
+  ) {}
+
+  async create(createCommentDto: CreateCommentDto) {
+    
+    const { text, userId, topicId } = createCommentDto;
+
+    // Fetch user and topic objects based on the IDs
+    const user = await this.UserRepo.findOne({ where: { id: userId } });
+    console.log(user);
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
+
+    const topic = await this.TopicRepo.findOne({ where: { id: topicId } });
+    console.log(topic);
+    if (!topic) {
+      throw new NotFoundException(`Topic with ID ${topicId} not found`);
+    }
+
+    const newComment = this.CommentRepo.create({text, user, topic})
+    return await this.CommentRepo.save(newComment)
   }
 
-  findAll() {
-    return `This action returns all comment`;
+  async findAll() {
+    return await this.CommentRepo.find({
+      relations:['user', 'topic'] // Fetches user and topic details
+    })
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} comment`;
+  async findOne(id: number) {
+    return await this.CommentRepo.findOne({ where: { id: id } });
   }
 
-  update(id: number, updateCommentDto: UpdateCommentDto) {
-    return `This action updates a #${id} comment`;
+  async update(id: number, updateCommentDto: UpdateCommentDto) {
+    
+    const { text, userId, topicId } = updateCommentDto;
+
+    // Fetch user and topic objects based on the IDs
+    const user = await this.UserRepo.findOne({ where: { id: userId } });
+    console.log(user);
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
+
+    const topic = await this.TopicRepo.findOne({ where: { id: topicId } });
+    console.log(topic);
+    if (!topic) {
+      throw new NotFoundException(`Topic with ID ${topicId} not found`);
+    }
+
+    return await this.CommentRepo.update(id, {text, user, topic} )
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} comment`;
+  async remove(id: number) {
+    return await this.CommentRepo.delete(id) ;
   }
 }
